@@ -1,19 +1,24 @@
 from __future__ import annotations
-
 import lexer_utils as lu
 import enum
-# import sys
+import sys
 from dataclasses import dataclass
 from typing import Iterator
 
+# desativa o limite de conversão decimal (deve ser tratado só na análise semântica)
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(0)
+
 
 class TokenKind(enum.Enum):
-    """Interface publicada na etapa do lexer; nomes e números são fixos."""
+    """Classe já implementada: nomes e números não devem ser alterados."""
 
     EOF = -1
+
     IDENTIFIER = 1
     INT_LITERAL = 2
     STRING_LITERAL = 3
+
     KW_INT = 10
     KW_BOOL = 11
     KW_VOID = 12
@@ -24,6 +29,7 @@ class TokenKind(enum.Enum):
     KW_WHILE = 17
     KW_RETURN = 18
     KW_PRINT = 19
+
     PLUS = 20
     MINUS = 21
     STAR = 22
@@ -39,6 +45,7 @@ class TokenKind(enum.Enum):
     LOGICAL_OR = 32
     LOGICAL_NOT = 33
     ASSIGN = 34
+
     LEFT_PAREN = 40
     RIGHT_PAREN = 41
     LEFT_BRACE = 42
@@ -72,6 +79,7 @@ class LexerError(Exception):
     def __str__(self) -> str:
         return f"erro léxico em {self.line}:{self.column}: {self.message}"
 
+
 KEYWORDS: dict[str, TokenKind] = {
     "int":    TokenKind.KW_INT,
     "bool":   TokenKind.KW_BOOL,
@@ -102,6 +110,7 @@ SINGLE_OP: dict[str, TokenKind] = {
     ",": TokenKind.COMMA,
     ";": TokenKind.SEMICOLON
 }
+
 
 class Lexer:
     """Converte texto-fonte MicroC em uma sequência de tokens."""
@@ -367,4 +376,3 @@ class Lexer:
 
     def scan(self) -> list[Token]:
         return list(self.tokens())
-
